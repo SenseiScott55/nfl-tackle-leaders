@@ -1,8 +1,10 @@
-# Archive the Lambda function source code
+# Archive the Lambda function source code (conditional)
 data "archive_file" "lambda_zip" {
-  type        = var.create_package ? "zip" : null
-  source_dir  = var.create_package ? var.source_dir : null
-  output_path = var.create_package ? "${path.module}/.terraform/lambda_${var.function_name}.zip" : null
+  count = var.create_package ? 1 : 0  # ADD THIS LINE
+
+  type        = "zip"
+  source_dir  = var.source_dir
+  output_path = "${path.module}/.terraform/lambda_${var.function_name}.zip"
 }
 
 # Lambda function

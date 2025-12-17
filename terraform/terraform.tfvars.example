@@ -1,0 +1,22 @@
+# AWS Configuration
+aws_region  = "us-east-1"
+environment = "prod"
+
+# Project Configuration
+project_name = "nfl-tackle-leaders"
+
+# DynamoDB Configuration
+dynamodb_table_name = "nfl_weekly_leaders"
+
+# NFL Season Configuration
+current_season = "2025"
+
+# Lambda Configuration
+ingest_lambda_timeout = 120
+ingest_lambda_memory  = 512
+api_lambda_timeout    = 30
+api_lambda_memory     = 256
+
+# Scheduling Configuration
+schedule_expression = "cron(0 14 ? * TUE *)" # Every Tuesday at 2 PM UTC
+enable_eventbridge  = true
