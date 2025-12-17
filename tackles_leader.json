@@ -1,0 +1,15 @@
+{
+  "stat": "totalTackles",
+  "value": 155.0,
+  "display_value": "155",
+  "athlete": {
+    "id": "4043130",
+    "name": "Jordyn Brooks",
+    "shortName": "J. Brooks"
+  },
+  "team": {
+    "id": "15",
+    "name": "Miami Dolphins",
+    "abbreviation": "MIA"
+  }
+}

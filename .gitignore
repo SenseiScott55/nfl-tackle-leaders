@@ -1,0 +1,105 @@
+### **Root `.gitignore`:**
+```
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+env/
+ENV/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+.terraform/
+.terraform.lock.hcl
+*.tfplan
+
+# AWS
+.aws/
+credentials
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.directory
+
+# Environment
+.env
+.env.local
+secrets.json
+config.local.json
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Node modules (if you add any JS tooling)
+node_modules/
+
+# Zip files (Lambda packages)
+*.zip
+
+# Backups
+*.bak
+*.backup
+```
+
+### **`terraform/.gitignore`:**
+```
+# Local state
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Variables
+*.tfvars
+!terraform.tfvars.example
+!environments/*.tfvars
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfplan
+
+# Plans
+*.tfplan
+
+# Crash logs
+crash.log
+crash.*.log
+
+# CLI config
+.terraformrc
+terraform.rc
