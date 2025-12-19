@@ -2,11 +2,11 @@
 
 Automated serverless data pipeline that tracks NFL weekly leaders in Total Tackles and Tackles for Loss.
 
-## 🏗️ Architecture
+## Architecture
 
 [Architecture diagram will go here]
 
-## 🚀 Tech Stack
+## Tech Stack
 
 - **Infrastructure as Code:** Terraform with modular design
 - **Compute:** AWS Lambda (Python 3.11)
@@ -18,17 +18,17 @@ Automated serverless data pipeline that tracks NFL weekly leaders in Total Tackl
 - **State Management:** S3 backend with DynamoDB locking
 - **Version Control:** GitHub
 
-## 📋 Features
+## Features
 
-- ✅ Automated weekly data collection (every Tuesday)
-- ✅ Tracks top player in Total Tackles per week
-- ✅ Tracks top player in Tackles for Loss per week
-- ✅ REST API for data access
-- ✅ Interactive web dashboard
-- ✅ Historical data for 2024 NFL season
-- ✅ Infrastructure as Code (100% Terraform)
+- Automated weekly data collection (every Tuesday)
+- Tracks top player in Total Tackles per week
+- Tracks top player in Tackles for Loss per week
+- REST API for data access
+- Interactive web dashboard
+- Historical data for 2024 NFL season
+- Infrastructure as Code (100% Terraform)
 
-## 🎯 Project Goals
+##  Project Goals
 
 This project demonstrates:
 - Serverless architecture design
@@ -39,7 +39,7 @@ This project demonstrates:
 - Frontend development
 - Cost-conscious cloud engineering
 
-## 📊 Cost Estimate
+##  Cost Estimate
 
 **Monthly Cost: < $1**
 - DynamoDB: Free tier (~36 items)
@@ -48,21 +48,9 @@ This project demonstrates:
 - S3: ~$0.50
 - CloudWatch: Free tier
 
-## 🚀 Quick Start
 
-See [SETUP.md](SETUP.md) for detailed deployment instructions.
 
-## 📖 Documentation
 
-- [Architecture Details](docs/ARCHITECTURE.md)
-- [API Documentation](docs/API.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-- [Cost Breakdown](docs/COSTS.md)
-
-## 🔗 Live Demo
-
-- **Dashboard:** [Coming Soon]
-- **API Endpoint:** [Coming Soon]
 
 ## 📝 License
 
@@ -71,6 +59,5 @@ MIT License - see [LICENSE](LICENSE) file
 ## 👤 Author
 
 [Your Name]
-- GitHub: [@yourusername]
-- LinkedIn: [Your LinkedIn]
-```
+- GitHub: [SenseiScott55]
+- LinkedIn: [https://www.linkedin.com/in/hunter-scott-158249243/]
