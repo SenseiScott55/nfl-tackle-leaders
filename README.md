@@ -2,9 +2,6 @@
 
 Automated serverless data pipeline that tracks NFL weekly leaders in Total Tackles and Tackles for Loss.
 
-## Architecture
-
-[Architecture diagram will go here]
 
 ## Tech Stack
 
