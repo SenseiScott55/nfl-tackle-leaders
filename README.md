@@ -45,16 +45,13 @@ This project demonstrates:
 - S3: ~$0.50
 - CloudWatch: Free tier
 
-
-
-
-
 ## 📝 License
 
 MIT License - see [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-[Your Name]
+- Hunter Scott
+- Email: [Hunterjscott535@gmail.com]
 - GitHub: [SenseiScott55]
 - LinkedIn: [https://www.linkedin.com/in/hunter-scott-158249243/]
