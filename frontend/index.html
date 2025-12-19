@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Tackle & Sack Leaders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .season-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .leader-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .leader-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .stat-type {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .tackles-badge {
+            background: #10b981;
+            color: white;
+        }
+
+        .sacks-badge {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .player-info {
+            margin: 20px 0;
+        }
+
+        .player-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .team-name {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .team-abbreviation {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #6366f1;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .updated-time {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            padding: 60px;
+        }
+
+        .error {
+            background: #ef4444;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid white;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .leaders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .leader-card {
+                padding: 20px;
+            }
+
+            .stat-value {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏈 NFL Leaders</h1>
+            <p class="subtitle">Weekly Tackle & Sack Leaders</p>
+            <div class="season-info" id="seasonInfo">
+                <span id="seasonText">Loading...</span>
+            </div>
+        </header>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading NFL Leaders...</p>
+        </div>
+
+        <div id="errorState" class="error" style="display: none;"></div>
+
+        <div id="leadersContainer" class="leaders-grid" style="display: none;"></div>
+
+        <footer>
+            <p>Data updates weekly after Monday Night Football</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/yourusername/nfl-tackle-leaders" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // API endpoint - REPLACE WITH YOUR ACTUAL API GATEWAY URL
+        const API_URL = 'https://46zj2ls6a8.execute-api.us-east-1.amazonaws.com/prod/current';;
+
+        // DOM elements
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const leadersContainer = document.getElementById('leadersContainer');
+        const seasonInfo = document.getElementById('seasonInfo');
+        const seasonText = document.getElementById('seasonText');
+
+        // Fetch and display leaders
+        async function fetchLeaders() {
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update season info
+                seasonText.textContent = `${data.season} Season • Week ${data.week}`;
+                
+                // Display leaders
+                displayLeaders(data.leaders);
+                
+                // Hide loading, show content
+                loadingState.style.display = 'none';
+                leadersContainer.style.display = 'grid';
+                
+            } catch (error) {
+                console.error('Error fetching leaders:', error);
+                showError('Failed to load NFL leaders. Please try again later.');
+            }
+        }
+
+        // Display leaders on the page
+        function displayLeaders(leaders) {
+            leadersContainer.innerHTML = '';
+            
+            leaders.forEach(leader => {
+                const card = createLeaderCard(leader);
+                leadersContainer.appendChild(card);
+            });
+        }
+
+        // Create a leader card element
+        function createLeaderCard(leader) {
+            const card = document.createElement('div');
+            card.className = 'leader-card';
+            
+            const isTackles = leader.stat_type === 'TOTAL_TACKLES';
+            const badgeClass = isTackles ? 'tackles-badge' : 'sacks-badge';
+            
+            card.innerHTML = `
+                <div class="stat-type ${badgeClass}">
+                    ${leader.stat_name}
+                </div>
+                <div class="player-info">
+                    <div class="player-name">${leader.player.name}</div>
+                    <div class="team-name">${leader.team.name}</div>
+                    <span class="team-abbreviation">${leader.team.abbreviation}</span>
+                </div>
+                <div class="stat-value">${leader.display_value}</div>
+                <div class="updated-time">
+                    Updated: ${formatDate(leader.updated_at)}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Format date string
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            loadingState.style.display = 'none';
+            errorState.textContent = message;
+            errorState.style.display = 'block';
+        }
+
+        // Load data when page loads
+        window.addEventListener('DOMContentLoaded', fetchLeaders);
+    </script>
+</body>
+</html>

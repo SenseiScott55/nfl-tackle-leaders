@@ -2,6 +2,7 @@
 NFL Tackle Leaders - Ingest Lambda Handler
 Fetches weekly leaders from ESPN Core API and stores in DynamoDB
 """
+from decimal import Decimal
 import json
 import os
 import logging
@@ -226,22 +227,22 @@ def store_leader(season: str, week: Optional[int], stat_type: str,
     sk = f"WEEK#{week:02d}#STAT#{stat_type}"
     
     item = {
-        'PK': pk,
-        'SK': sk,
-        'season': season,
-        'week_number': week,
-        'stat_type': stat_type,
-        'stat_display_name': leader_data['stat_display_name'],
-        'player_id': leader_data['player_id'],
-        'player_name': leader_data['player_name'],
-        'player_short_name': leader_data['player_short_name'],
-        'team_id': leader_data['team_id'],
-        'team_name': leader_data['team_name'],
-        'team_abbreviation': leader_data['team_abbreviation'],
-        'stat_value': leader_data['value'],
-        'stat_display_value': leader_data['display_value'],
-        'updated_at': datetime.utcnow().isoformat() + 'Z'
-    }
+    'PK': pk,
+    'SK': sk,
+    'season': season,
+    'week_number': week,
+    'stat_type': stat_type,
+    'stat_display_name': leader_data['stat_display_name'],
+    'player_id': leader_data['player_id'],
+    'player_name': leader_data['player_name'],
+    'player_short_name': leader_data['player_short_name'],
+    'team_id': leader_data['team_id'],
+    'team_name': leader_data['team_name'],
+    'team_abbreviation': leader_data['team_abbreviation'],
+    'stat_value': Decimal(str(leader_data['value'])), # Store as Decimal for DynamoDB
+    'stat_display_value': leader_data['display_value'],
+    'updated_at': datetime.utcnow().isoformat() + 'Z'
+}
     
     logger.info(f"Storing leader: {stat_type} - {leader_data['player_name']} ({leader_data['display_value']})")
     

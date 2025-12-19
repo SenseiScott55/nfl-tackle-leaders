@@ -1,4 +1,18 @@
-# Local values for reuse
+# Terraform Backend Resources (S3 + DynamoDB for state locking)
+module "terraform_backend" {
+  source = "./modules/terraform_backend"
+
+  state_bucket_name = "${var.project_name}-terraform-state"
+  lock_table_name   = "${var.project_name}-terraform-locks"
+
+  tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    Purpose     = "Terraform State Management"
+  }
+}
+
+# Local values for reuse 
 locals {
   common_tags = {
     Project     = var.project_name
@@ -27,19 +41,20 @@ module "ingest_lambda" {
   timeout       = var.ingest_lambda_timeout
   memory_size   = var.ingest_lambda_memory
 
-  source_dir    = "${path.root}/../lambda/ingest"
-  create_package = true
+  zip_file       = "${path.root}/../lambda/ingest/ingest.zip"
+  create_package = false
 
   environment_variables = {
-    TABLE_NAME       = module.dynamodb.table_name
-    CURRENT_SEASON   = var.current_season
+    TABLE_NAME        = module.dynamodb.table_name
+    CURRENT_SEASON    = var.current_season
     ESPN_API_BASE_URL = var.espn_api_base_url
-    LOG_LEVEL        = "INFO"
+    LOG_LEVEL         = "INFO"
   }
 
-  # Attach DynamoDB write permissions
+  # Attach DynamoDB read and write permissions
   attach_policy_arns = [
-    module.dynamodb.lambda_write_policy_arn
+    module.dynamodb.lambda_write_policy_arn,
+    module.dynamodb.lambda_read_policy_arn
   ]
 
   log_retention_days = 7
@@ -47,7 +62,7 @@ module "ingest_lambda" {
   tags = local.common_tags
 }
 
-# API Lambda - Serves data from DynamoDB via Function URL
+# API Lambda - Serves data from DynamoDB
 module "api_lambda" {
   source = "./modules/lambda"
 
@@ -58,8 +73,8 @@ module "api_lambda" {
   timeout       = var.api_lambda_timeout
   memory_size   = var.api_lambda_memory
 
-  source_dir    = "${path.root}/../lambda/api"
-  create_package = true
+  zip_file       = "${path.root}/../lambda/api/api.zip"
+  create_package = false
 
   environment_variables = {
     TABLE_NAME     = module.dynamodb.table_name
@@ -72,16 +87,23 @@ module "api_lambda" {
     module.dynamodb.lambda_read_policy_arn
   ]
 
-  # Enable Lambda Function URL for easy API access
-  create_function_url    = true
-  function_url_auth_type = "NONE"
-
-  # CORS configuration for web access
-  cors_allow_origins = ["*"]
-  cors_allow_methods = ["GET", "OPTIONS"]
-  cors_allow_headers = ["Content-Type"]
+  # NO Function URL - using API Gateway instead
+  create_function_url = false
 
   log_retention_days = 7
+
+  tags = local.common_tags
+}
+
+# API Gateway for the API Lambda
+module "api_gateway" {
+  source = "./modules/api_gateway"
+
+  api_name             = "${var.project_name}-api"
+  description          = "API Gateway for NFL Tackle Leaders"
+  stage_name           = "prod"
+  lambda_function_name = module.api_lambda.function_name
+  lambda_invoke_arn    = module.api_lambda.invoke_arn
 
   tags = local.common_tags
 }
@@ -101,5 +123,12 @@ module "eventbridge" {
   tags = local.common_tags
 }
 
-# Note: S3 website module will be added in next phase
-# Note: API Gateway module optional (using Lambda Function URL for now)
+# S3 Static Website
+module "s3_website" {
+  source = "./modules/s3_website"
+
+  bucket_name     = "${var.project_name}-website"
+  index_html_path = "${path.root}/../frontend/index.html"
+
+  tags = local.common_tags
+}

@@ -2,6 +2,7 @@
 NFL Tackle Leaders - API Lambda Handler
 Serves data from DynamoDB via Lambda Function URL
 """
+from decimal import Decimal
 import json
 import os
 import logging
@@ -12,6 +13,14 @@ from boto3.dynamodb.conditions import Key
 # Configure logging
 logger = logging.getLogger()
 logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+
+# Custom JSON encoder to handle Decimal types
+class DecimalEncoder(json.JSONEncoder):
+    """JSON encoder that converts Decimal to int/float"""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return int(obj) if obj % 1 == 0 else float(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 # Environment variables
 TABLE_NAME = os.environ['TABLE_NAME']
@@ -262,6 +271,11 @@ def format_leader_item(item: Dict) -> Dict[str, Any]:
     Returns:
         dict: Formatted leader
     """
+    # Convert Decimal to int/float for JSON serialization
+    stat_value = item['stat_value']
+    if isinstance(stat_value, Decimal):
+        stat_value = int(stat_value) if stat_value % 1 == 0 else float(stat_value)
+    
     return {
         'stat_type': item['stat_type'],
         'stat_name': item['stat_display_name'],
@@ -275,7 +289,7 @@ def format_leader_item(item: Dict) -> Dict[str, Any]:
             'name': item['team_name'],
             'abbreviation': item['team_abbreviation']
         },
-        'value': item['stat_value'],
+        'value': stat_value,
         'display_value': item['stat_display_value'],
         'updated_at': item['updated_at']
     }
@@ -299,7 +313,7 @@ def success_response(data: Dict[str, Any]) -> Dict[str, Any]:
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type'
         },
-        'body': json.dumps(data)
+        'body': json.dumps(data, cls=DecimalEncoder)  # ← UPDATED
     }
 
 
@@ -320,9 +334,7 @@ def error_response(status_code: int, message: str) -> Dict[str, Any]:
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
-        'body': json.dumps({
-            'error': message
-        })
+        'body': json.dumps({'error': message}, cls=DecimalEncoder)  # ← UPDATED
     }
 
 
@@ -341,4 +353,4 @@ if __name__ == "__main__":
     test_context = {}
     
     result = lambda_handler(test_event, test_context)
-    print(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2, cls=DecimalEncoder))

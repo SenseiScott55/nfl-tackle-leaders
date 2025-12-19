@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"Successfully ingested NFL leaders\", \"season\": \"2025\", \"week\": null, \"leaders\": [{\"stat_type\": \"TOTAL_TACKLES\", \"player\": \"Jordyn Brooks\", \"team\": \"MIA\", \"value\": \"155\"}, {\"stat_type\": \"SACKS\", \"player\": \"Myles Garrett\", \"team\": \"CLE\", \"value\": \"22\"}]}"}
