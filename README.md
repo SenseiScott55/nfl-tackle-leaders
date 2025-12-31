@@ -24,8 +24,6 @@ Website Link: http://nfl-tackle-leaders-website.s3-website-us-east-1.amazonaws.c
 - Tracks top player in Total Tackles per week
 - Tracks top player in Tackles for Loss per week
 - REST API for data access
-- Interactive web dashboard
-- Historical data for 2024 NFL season
 - Infrastructure as Code (100% Terraform)
 
 ##  Project Goals
